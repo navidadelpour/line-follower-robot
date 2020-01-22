@@ -12,8 +12,8 @@ const int LEFT_IN1 = 6;
 const int LEFT_IN2 = 7;
 const int LEFT_EN = 5;
 
-const int RIGHT_IN1 = 8;
-const int RIGHT_IN2 = 9;
+const int RIGHT_IN1 = 9;
+const int RIGHT_IN2 = 8;
 const int RIGHT_EN = 10;
 
 const float KP = 80;

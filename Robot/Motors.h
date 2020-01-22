@@ -14,9 +14,6 @@ class Motors {
     int right_in2;
     int right_en;
 
-    enum Direction {FORWARD, BACKWARD};
-    enum Motor {LEFT, RIGHT};
-
     Motors (int normal_speed, int min_speed, int max_speed, int left_in1, int left_in2, int left_en, int right_in1, int right_in2, int right_en) {
         this->normal_speed = normal_speed;
         this->min_speed = min_speed;
@@ -41,30 +38,24 @@ class Motors {
         pinMode(right_in2, OUTPUT);
     }
 
-    void set_motor(Motor motor, Direction direction, int speed) {
-        if(motor == LEFT) {
-            if(direction == FORWARD) {
-                digitalWrite(left_in1, LOW);
-                digitalWrite(left_in2, HIGH);
-            } else if (direction == BACKWARD) {
-                digitalWrite(left_in1, HIGH);
-                digitalWrite(left_in2, LOW);
-            }
-            analogWrite(left_en, speed);
-        } else if(motor == RIGHT) {
-            if(direction == FORWARD) {
-                digitalWrite(right_in1, HIGH);
-                digitalWrite(right_in2, LOW);
-            } else if (direction == BACKWARD) {
-                digitalWrite(right_in1, LOW);
-                digitalWrite(right_in2, HIGH);
-            }
-            analogWrite(right_en, speed);
-        }
+    void set_motor(int in1, int in2, int en, int speed) {
+        int *direction = get_direction(speed);
+
+        digitalWrite(left_in1, direction[0]);
+        digitalWrite(left_in2, direction[1]);
+        analogWrite(en, normalize_speed(speed));
     }
 
-    Direction get_direction(int speed) {
-        return speed > 0 ? FORWARD : BACKWARD;
+    int *get_direction(int speed) {
+        int direction[2];
+        if(speed > 0) {
+            direction[0] = LOW;
+            direction[1] = HIGH;
+        } else {
+            direction[0] = HIGH;
+            direction[1] = LOW;
+        }
+        return direction;
     }
 
     int normalize_speed(int speed) {
@@ -75,19 +66,19 @@ class Motors {
         int left_speed = normal_speed + speed_difference;
         int right_speed = normal_speed - speed_difference;
 
-        set_motor(LEFT, get_direction(left_speed), normalize_speed(left_speed));
-        set_motor(RIGHT, get_direction(right_speed), normalize_speed(right_speed));
+        set_motor(left_in1, left_in2, left_en, left_speed);
+        set_motor(right_in1, right_in2, right_en, right_speed);
 
         if(debug) {
             Serial.print("left_speed: ");
             Serial.print(normalize_speed(left_speed));
             Serial.print(" - ");
-            Serial.println(get_direction(left_speed) == FORWARD ? "F" : "B");
+            Serial.println(left_speed > 0 ? "F" : "B");
 
             Serial.print("right_speed: ");
             Serial.print(normalize_speed(right_speed));
             Serial.print(" - ");
-            Serial.println(get_direction(right_speed) == FORWARD ? "F" : "B");
+            Serial.println(right_speed > 0 ? "F" : "B");
         }
     }
 
