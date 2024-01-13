@@ -62,4 +62,3 @@ User-configurable settings for threshold, sensor count, sensor pins, errors, mot
 3. **Debugging:**
    - Optionally print error and speed difference values to Serial for debugging purposes.
 
-Feel free to customize the settings and experiment with different values for optimal robot performance. The code is designed for line-following robots and can be extended for various applications.
